@@ -1,0 +1,83 @@
+version: '3'
+
+services:
+  # # TODO: Dockerfile&python
+  # app:
+  #   container_name: app
+  #   image: app
+  #   build: ..
+  #   ports:
+  #     - 8080:5000
+  #   environment:
+  #     S3_END_POINT_URL: http://minio:9000
+  #     S3_BUCKET_URL: http://minio:9000/myminio/test
+  #     SQS_END_POINT_URL: http://elasticmq:9324
+  #     SQS_QUEUE_URL: http://elasticmq:9324/queue/test
+  #     AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+  #     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  mysql:
+    container_name: mysql
+    image: mysql:5.7.30
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: develop
+      MYSQL_USER: develop
+      MYSQL_PASSWORD: password
+      TZ: 'Asia/Tokyo'
+  minio:
+    container_name: minio
+    image: minio/minio:latest
+    ports:
+      - 9000:9000
+    # volumes:
+    #   - ./data/minio/data:/export
+    #   - ./data/minio/config:/root/.minio
+    environment:
+      MINIO_ACCESS_KEY: $AWS_ACCESS_KEY_ID
+      MINIO_SECRET_KEY: $AWS_SECRET_ACCESS_KEY
+    command: server /export
+  createbuckets:
+    container_name: createbuckets
+    image: minio/mc
+    depends_on:
+      - minio
+    environment:
+      MINIO_ACCESS_KEY: $AWS_ACCESS_KEY_ID
+      MINIO_SECRET_KEY: $AWS_SECRET_ACCESS_KEY
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add myminio http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY}) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb myminio/test;
+      /usr/bin/mc policy set download myminio/test;
+      exit 0;
+      "
+  elasticmq:
+    container_name: elasticmq
+    image: elasticmq
+    build: elasticmq/
+    ports:
+    - 9324:9324
+  createqueue:
+    container_name: createqueue
+    image: createqueue
+    build: createqueue/
+    depends_on:
+      - elasticmq
+    environment:
+      SQS_END_POINT_URL: http://elasticmq:9324
+      SQS_QUEUE_NAME: test
+      SQS_AWS_REGION: ap-northeast-1
+      SQS_ACCESS_KEY: $AWS_ACCESS_KEY_ID
+      SQS_SECRET_KEY: $AWS_SECRET_ACCESS_KEY
+  worker:
+    container_name: worker
+    image: worker
+    build: worker/
+    environment:
+      SQS_END_POINT_URL: http://elasticmq:9324
+      SQS_QUEUE_URL: http://elasticmq:9324/queue/test
+      SQS_AWS_REGION: ap-northeast-1
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
