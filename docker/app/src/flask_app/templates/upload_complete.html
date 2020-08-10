@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="main-contents">
+        <h3 class="main-cont-name">登録情報</h3>
+        {% if images %}
+            <table class="tab">
+                <thead>
+                    <tr>
+                        <th>ファイル名</th>
+                        <th>S3パス</th>
+                        <th>一言</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for image in images %}
+                        <tr>
+                            <th>{{ image.name }}</th>
+                            <th>{{ image.s3_path }}</th>
+                            <th>{{ image.comments }}</th>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+    <div class="btn-box"><a href="/upload" class="btn">戻る</a></div>
+{% endblock %}

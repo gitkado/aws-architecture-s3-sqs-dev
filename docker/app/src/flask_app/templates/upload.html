@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="main-contents">
+            <div class="input-box">
+                <dl>
+                    <dt for="image">画像</dt>
+                    <dd><input type="file" name="image" class="input-wid-m" required></dd>
+                </dl>
+                <dl>
+                    <dt for="comments">一言</dt>
+                    <dd><input type="text" name="comments" class="input-wid-m"></dd>
+                </dl>
+            </div>
+
+            <div class="btn-box">
+                <input type="submit" value="アップロード" class="btn">
+            </div>
+        </div>
+    </form>
+{% endblock %}

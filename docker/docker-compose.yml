@@ -1,39 +1,43 @@
 version: '3'
 
 services:
-  # # TODO: Dockerfile&python
-  # app:
-  #   container_name: app
-  #   image: app
-  #   build: ..
-  #   ports:
-  #     - 8080:5000
-  #   environment:
-  #     S3_END_POINT_URL: http://minio:9000
-  #     S3_BUCKET_URL: http://minio:9000/myminio/test
-  #     SQS_END_POINT_URL: http://elasticmq:9324
-  #     SQS_QUEUE_URL: http://elasticmq:9324/queue/test
-  #     AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-  #     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  app:
+    container_name: app
+    image: app
+    build: app/
+    environment:
+      FLASK_CONFIGURATION: development
+      TZ: Asia/Tokyo
+      S3_BUCKET_NAME: test
+      S3_END_POINT_URL: http://minio:9000
+      # SQS_END_POINT_URL: http://elasticmq:9324
+      # SQS_QUEUE_URL: http://elasticmq:9324/queue/test
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+    volumes:
+      - ./app/src:/opt/app
+    ports:
+      - 8080:80
   mysql:
     container_name: mysql
     image: mysql:5.7.30
     ports:
       - 3306:3306
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: develop
       MYSQL_USER: develop
       MYSQL_PASSWORD: password
       TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
   minio:
     container_name: minio
     image: minio/minio:latest
     ports:
       - 9000:9000
-    # volumes:
-    #   - ./data/minio/data:/export
-    #   - ./data/minio/config:/root/.minio
+    volumes:
+      - ./data/minio/data:/export
+      - ./data/minio/config:/root/.minio
     environment:
       MINIO_ACCESS_KEY: $AWS_ACCESS_KEY_ID
       MINIO_SECRET_KEY: $AWS_SECRET_ACCESS_KEY
