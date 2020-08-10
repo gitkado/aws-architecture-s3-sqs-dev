@@ -4,12 +4,13 @@
 export AWS_SECRET_ACCESS_KEY=aws_secret_access_key
 export AWS_ACCESS_KEY_ID=aws_access_key_id
 
-cd docker
 docker-compose build
 docker-compose up
 ```
 
 ## containers
+
+![architecture](architecture.png)
 
 - app(http://127.0.0.1:8080)
   - python application

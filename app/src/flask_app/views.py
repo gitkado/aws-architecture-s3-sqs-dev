@@ -60,11 +60,6 @@ def upload():
 @app.route('/upload', methods=['POST'])
 @logger_exception
 def upload_submit():
-    """
-    # TODO
-    # queue登録
-    # 日本語がDBに登録できない
-    """
     schema = {
         'image': {
             'required': True,
@@ -77,7 +72,7 @@ def upload_submit():
     }
     request_form = request.form.to_dict()
     for field, file in request.files.to_dict().items():
-        request_form['name'] = 'todo.jpg' # file.filename
+        request_form['name'] = file.filename
         request_form[field] = BufferedReader(file).read()
 
     if h.verify_parameters(schema, request_form) is False:
@@ -91,15 +86,15 @@ def upload_submit():
     db.session.commit()
     h.success_flash('Image uploaded!')
 
-    return redirect('/upload_complete')
+    return redirect('/images')
 
 
-@app.route('/upload_complete', methods=['GET'])
+@app.route('/images', methods=['GET'])
 @logger_exception
-def upload_complete():
+def images():
     """
     # TODO
     # S3画像表示
     """
     images = Image.query.all()
-    return h.render_template('upload_complete.html', images=images)
+    return h.render_template('images.html', images=images)

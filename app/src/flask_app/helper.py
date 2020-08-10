@@ -1,4 +1,5 @@
 import imghdr
+import json
 import itertools
 import mimetypes
 from os import path
@@ -14,7 +15,8 @@ from . import app
 from .validator import CustomValidator
 from .consts import (
     FLASH_CLASS, HTML_TEMPLATE_VIEW_TITLE,
-    S3_BUCKET_NAME, S3_END_POINT_URL, S3_REGION
+    S3_BUCKET_NAME, S3_END_POINT_URL, S3_REGION,
+    SQS_END_POINT_URL, SQS_QUEUE_URL, SQS_REGION,
 )
 
 
@@ -92,11 +94,12 @@ class Helper:
 
     @classmethod
     def sqs_client(cls):
-        # return boto3.client('sqs', region_name=SQS_REGION, endpoint_url=SQS_END_POINT_URL)
-        pass
+        return boto3.client('sqs', region_name=SQS_REGION, endpoint_url=SQS_END_POINT_URL)
 
     @classmethod
     def sqs_send(cls, message_dict):
-        # client = cls.sqs_client()
-        # doct -> json
-        pass
+        client = cls.sqs_client()
+        client.send_message(
+            QueueUrl=SQS_QUEUE_URL,
+            MessageBody=json.dumps(message_dict)
+        )

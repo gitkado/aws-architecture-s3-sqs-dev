@@ -10,8 +10,8 @@ services:
       TZ: Asia/Tokyo
       S3_BUCKET_NAME: test
       S3_END_POINT_URL: http://minio:9000
-      # SQS_END_POINT_URL: http://elasticmq:9324
-      # SQS_QUEUE_URL: http://elasticmq:9324/queue/test
+      SQS_END_POINT_URL: http://elasticmq:9324
+      SQS_QUEUE_URL: http://elasticmq:9324/queue/test
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
       AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
     volumes:

@@ -111,14 +111,14 @@ func Subscribe(sqsClient SqsClientI, goenv Config) error {
 				log.Error("sqs receive message json unmarshal error")
 				return errors.WithStack(err)
 			}
-			// キーが存在しない場合にUnmarshalするとvalueで0が返ってくる
-			if queueRes.Id == 0 {
+			// キーが存在しない場合にUnmarshalするとvalueで""が返ってくる
+			if queueRes.Path == "" {
 				log.Error("sqs receive message json unmarshal value zero")
 				return fmt.Errorf("err: json unmarshal queue is %+v", queueRes)
 			}
 
 			// queueの値を使った処理
-			log.Infof("main process Id is %d", queueRes.Id)
+			log.Infof("main process Path is %+v", queueRes.Path)
 
 			err = sqsClient.DeleteMessage(msg, goenv.SqsQueueUrl)
 			if err != nil {
@@ -142,7 +142,7 @@ func Subscribe(sqsClient SqsClientI, goenv Config) error {
 }
 
 type QueueMessage struct {
-	Id int `json:"id"`
+	Path string `json:"path"`
 }
 
 func main() {

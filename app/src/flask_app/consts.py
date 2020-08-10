@@ -12,9 +12,9 @@ S3_END_POINT_URL = os.getenv('S3_END_POINT_URL', None)
 S3_REGION = os.getenv('S3_REGION', 'ap-northeast-1')
 
 # SQS情報
-# SQS_END_POINT_URL = os.getenv('SQS_END_POINT_URL', None)
-# SQS_QUEUE_URL = os.getenv('SQS_QUEUE_URL', None)
-# SQS_REGION = os.getenv('SQS_REGION', 'ap-northeast-1')
+SQS_END_POINT_URL = os.getenv('SQS_END_POINT_URL', None)
+SQS_QUEUE_URL = os.getenv('SQS_QUEUE_URL', None)
+SQS_REGION = os.getenv('SQS_REGION', 'ap-northeast-1')
 
 # Flaskの設定一覧
 FLASK_CONFIG_LIST = {
@@ -36,7 +36,7 @@ CERBERUS_MESSAGES = {
 
 # 画面名(HTML対応表)
 HTML_TEMPLATE_VIEW_TITLE = {
-    'upload_complete.html': 'upload_complete',
+    'images.html': 'images',
     'upload.html': 'upload',
 }
 
